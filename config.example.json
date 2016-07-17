@@ -1,0 +1,12 @@
+{
+	"topics": [
+		"Home/+/Motion"
+	],
+	"mqttTopicRoomToHueGroupMapping": {
+		"kitchen": "Küche",
+		"hallway": "Flur",
+		"livingRoom": "Wohnzimmer",
+		"bedroom": "Schlafzimmer"
+	},
+    "brokerUrl": "mqtt://test.mosquitto.org"
+}
