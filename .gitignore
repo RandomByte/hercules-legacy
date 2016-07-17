@@ -40,3 +40,4 @@ jspm_packages
 *.sublime-workspace
 
 config.json
+.hueConfig.json
