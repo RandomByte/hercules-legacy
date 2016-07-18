@@ -5,7 +5,8 @@ var oConfig = require("./config.json"),
 
 	oHue,
 	mSites = {},
-	mHandledLights = {};
+	mHandledLights = {},
+	mHandledGroups = {};
 
 if (!oConfig.brokerUrl || !oConfig.topics) {
 	console.log("There's something missing in your config.json, please refer to config.example.json for an example");
@@ -47,10 +48,9 @@ function handleSensorMessage(oMessage) {
 }
 
 function handleStateChange(oStateChange) {
-	var bMotion, iLightId,
+	var bMotion,
 		sSensorName, sRoom, sHueRoom,
-		oSensor, aLightIds,
-		i;
+		oSensor, oGroup;
 
 	oSensor = oStateChange.oSource;
 	sSensorName = oSensor.getName();
@@ -61,27 +61,67 @@ function handleStateChange(oStateChange) {
 		sRoom = oSensor.getParent().getName();
 
 		if (oConfig.mqttTopicRoomToHueGroupMapping) {
+			// Do the mapping
 			sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
 		}
 
-		aLightIds = oHue.getGroupByName(sHueRoom).aLightIds;
-
-		for (i = aLightIds.length - 1; i >= 0; i--) {
-			iLightId = aLightIds[i];
-			handleLight(iLightId, bMotion);
-		}
-
+		oGroup = oHue.getGroupByName(sHueRoom);
+		handleGroup(oGroup.sId, bMotion);
 		break;
 	default:
 		break;
 	}
 }
 
+function handleGroup(iGroupId, bOn) {
+	// Load group to
+	//	a) check if we are allowed to handle it
+	//	b) change it's properties to save them back
+	return oHue.getClient().groups.getById(iGroupId).then(function(oGroup) {
+		var iLightId, oMetaGroup, i;
+
+		oMetaGroup = mHandledGroups[iGroupId];
+		if (oGroup.on && !oMetaGroup) {
+			// We won't handle this group
+			// -> fallback to lights
+			for (i = oGroup.aLightIds.length - 1; i >= 0; i--) {
+				iLightId = oGroup.aLightIds[i];
+				handleLight(iLightId, bOn);
+			}
+			return;
+		}
+		if (!oMetaGroup) {
+			oMetaGroup = mHandledGroups[iGroupId] = {};
+		}
+
+		oGroup.on = bOn;
+		if (bOn) {
+			console.log("Turning on group " + oGroup.name);
+			oGroup.brightness = 184;
+			oGroup.hue = 8411;
+			oGroup.saturation = 140;
+			return oHue.getClient().groups.save(oGroup);
+		}
+		if (oMetaGroup.oOffTimeout) {
+			clearTimeout(oMetaGroup.oOffTimeout);
+		}
+		oMetaGroup.oOffTimeout = setTimeout(function() {
+			console.log("Turning off group " + oGroup.name);
+			oHue.getClient().groups.save(oGroup);
+			mHandledGroups[iGroupId] = null;
+		}, 5000);
+	})
+	.catch(function(err) {
+		console.log(err);
+		console.log("Failed to update group");
+	});
+}
+
 function handleLight(iLightId, bOn) {
 	// Load light to
 	//	a) check if we are allowed to handle it
 	//	b) change it's properties to save them back
-	oHue.getClient().lights.getById(iLightId).then(function(oLight) {
+	return oHue.getClient().lights.getById(iLightId).then(function(oLight) {
 		var oMetaLight;
 
 		oMetaLight = mHandledLights[iLightId];
@@ -107,6 +147,7 @@ function handleLight(iLightId, bOn) {
 		oMetaLight.oOffTimeout = setTimeout(function() {
 			console.log("Turning off light " + oLight.name);
 			oHue.getClient().lights.save(oLight);
+			mHandledLights[iLightId] = null;
 		}, 5000);
 	})
 	.catch(function(err) {

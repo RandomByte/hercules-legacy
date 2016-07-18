@@ -107,6 +107,7 @@ Hue.prototype.loadGroups = function() {
 			oGroup = aGroups[i];
 			if (oGroup.type === "Room") {
 				this.mGroups[oGroup.name] = {
+					sId: oGroup.id,
 					aLightIds: oGroup.lightIds
 				};
 			}

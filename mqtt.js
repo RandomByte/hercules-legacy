@@ -35,12 +35,10 @@ function MqttClient(sBrokerUrl, aTopics) {
 }
 
 MqttClient.prototype.subscribeToTopics = function(aTopics) {
-	var i;
-
-	for (i = 0; i < aTopics.length; i++) {
-		// Topic must follow structure "<site>/<room>/<sensor>" or "<site>/<sensor>"
-		this.oMqttClient.subscribe(aTopics[i]);
-	}
+	// Topics must follow structure "<site>/<room>/<sensor>" or "<site>/<sensor>"
+	this.oMqttClient.subscribe(aTopics, {
+		qos: 2
+	});
 };
 
 MqttClient.prototype.attachSensorMessage = function(callback) {

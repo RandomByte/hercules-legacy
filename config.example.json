@@ -1,8 +1,10 @@
 {
-	"topics": [
-		"Home/+/Motion"
-	],
+	"topics": {
+		"<topic>": "<QoS level as int>",
+		"Home/+/Motion": 2
+	},
 	"mqttTopicRoomToHueGroupMapping": {
+		"<mqtt topic room part>": "<hue group name>",
 		"kitchen": "Küche",
 		"hallway": "Flur",
 		"livingRoom": "Wohnzimmer",
