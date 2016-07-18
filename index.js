@@ -75,7 +75,6 @@ function handleRoom(oRoom) {
 	}
 
 	bMotion = oRoom.getSensor("Motion").getValue();
-
 	oGroup = oHue.getGroupByName(sHueRoom);
 	handleGroup(oGroup.sId, bMotion);
 }
@@ -88,6 +87,13 @@ function handleGroup(iGroupId, bOn) {
 		var iLightId, oMetaGroup, i;
 
 		oMetaGroup = mHandledGroups[iGroupId];
+
+		if (oMetaGroup && oMetaGroup.oOffTimeout) {
+			// Clear any existing off-timeout first
+			clearTimeout(oMetaGroup.oOffTimeout);
+			oMetaGroup.oOffTimeout = null;
+		}
+
 		if (oGroup.anyOn && !oMetaGroup) {
 			// We won't handle this group
 			// -> fallback to lights
@@ -105,28 +111,25 @@ function handleGroup(iGroupId, bOn) {
 
 		if (!oMetaGroup) {
 			oMetaGroup = mHandledGroups[iGroupId] = {};
-		} else if (oMetaGroup.oOffTimeout) {
-			// Clear any existing off-timeout
-			clearTimeout(oMetaGroup.oOffTimeout);
 		}
 
 		oGroup.on = bOn;
 		if (bOn) {
-			console.log(new Date() + "Turning on group " + oGroup.name);
+			console.log(new Date() + " Turning on group " + oGroup.name);
 			oGroup.brightness = 184;
 			oGroup.hue = 8411;
 			oGroup.saturation = 140;
 			return oHue.getClient().groups.save(oGroup);
 		}
 		oMetaGroup.oOffTimeout = setTimeout(function() {
-			console.log(new Date() + "Turning off group " + oGroup.name);
+			console.log(new Date() + " Turning off group " + oGroup.name);
 			oHue.getClient().groups.save(oGroup);
 			mHandledGroups[iGroupId] = null;
 		}, 5000);
 	})
 	.catch(function(err) {
 		console.log(err);
-		console.log(new Date() + "Failed to update group");
+		console.log(new Date() + " Failed to update group");
 	});
 }
 
@@ -138,6 +141,13 @@ function handleLight(iLightId, bOn) {
 		var oMetaLight;
 
 		oMetaLight = mHandledLights[iLightId];
+
+		if (oMetaLight.oOffTimeout) {
+			// Clear any existing off-timeout first
+			clearTimeout(oMetaLight.oOffTimeout);
+			oMetaLight.oOffTimeout = null;
+		}
+
 		if (oLight.on && !oMetaLight) {
 			// We won't handle this light
 			return;
@@ -150,27 +160,24 @@ function handleLight(iLightId, bOn) {
 
 		if (!oMetaLight) {
 			oMetaLight = mHandledLights[iLightId] = {};
-		} else if (oMetaLight.oOffTimeout) {
-			// Clear any existing off-timeout
-			clearTimeout(oMetaLight.oOffTimeout);
 		}
 
 		oLight.on = bOn;
 		if (bOn) {
-			console.log(new Date() + "Turning on light " + oLight.name);
+			console.log(new Date() + " Turning on light " + oLight.name);
 			oLight.brightness = 184;
 			oLight.hue = 8411;
 			oLight.saturation = 140;
 			return oHue.getClient().lights.save(oLight);
 		}
 		oMetaLight.oOffTimeout = setTimeout(function() {
-			console.log(new Date() + "Turning off light " + oLight.name);
+			console.log(new Date() + " Turning off light " + oLight.name);
 			oHue.getClient().lights.save(oLight);
 			mHandledLights[iLightId] = null;
 		}, 5000);
 	})
 	.catch(function(err) {
 		console.log(err);
-		console.log(new Date() + "Failed to update light");
+		console.log(new Date() + " Failed to update light");
 	});
 }
