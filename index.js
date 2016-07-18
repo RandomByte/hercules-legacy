@@ -142,7 +142,7 @@ function handleLight(iLightId, bOn) {
 
 		oMetaLight = mHandledLights[iLightId];
 
-		if (oMetaLight.oOffTimeout) {
+		if (oMetaLight && oMetaLight.oOffTimeout) {
 			// Clear any existing off-timeout first
 			clearTimeout(oMetaLight.oOffTimeout);
 			oMetaLight.oOffTimeout = null;
