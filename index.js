@@ -48,29 +48,36 @@ function handleSensorMessage(oMessage) {
 }
 
 function handleStateChange(oStateChange) {
-	var bMotion,
-		sSensorName, sRoom, sHueRoom,
-		oSensor, oGroup;
+	var sSensorName,
+		oSensor;
 
 	oSensor = oStateChange.oSource;
 	sSensorName = oSensor.getName();
 
 	switch (sSensorName) {
 	case "Motion":
-		bMotion = oSensor.getValue();
-		sRoom = oSensor.getParent().getName();
-
-		if (oConfig.mqttTopicRoomToHueGroupMapping) {
-			// Do the mapping
-			sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
-		}
-
-		oGroup = oHue.getGroupByName(sHueRoom);
-		handleGroup(oGroup.sId, bMotion);
+		handleRoom(oSensor.getParent());
 		break;
 	default:
 		break;
 	}
+}
+
+function handleRoom(oRoom) {
+	var bMotion, sRoom, sHueRoom,
+		oGroup;
+
+	sRoom = oRoom.getName();
+
+	if (oConfig.mqttTopicRoomToHueGroupMapping) {
+		// Do the mapping
+		sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
+	}
+
+	bMotion = oRoom.getSensor("Motion").getValue();
+
+	oGroup = oHue.getGroupByName(sHueRoom);
+	handleGroup(oGroup.sId, bMotion);
 }
 
 function handleGroup(iGroupId, bOn) {
@@ -81,39 +88,45 @@ function handleGroup(iGroupId, bOn) {
 		var iLightId, oMetaGroup, i;
 
 		oMetaGroup = mHandledGroups[iGroupId];
-		if (oGroup.on && !oMetaGroup) {
+		if (oGroup.anyOn && !oMetaGroup) {
 			// We won't handle this group
 			// -> fallback to lights
-			for (i = oGroup.aLightIds.length - 1; i >= 0; i--) {
-				iLightId = oGroup.aLightIds[i];
+			for (i = oGroup.lightIds.length - 1; i >= 0; i--) {
+				iLightId = oGroup.lightIds[i];
 				handleLight(iLightId, bOn);
 			}
 			return;
+		} else if (oMetaGroup && ((bOn && oGroup.allOn) || (!bOn && !oGroup.allOn))) {
+			// We handle it and it's already on or off
+			// -> nothing to do
+			// If we wouldn't handle it, we might want to set our color
+			return;
 		}
+
 		if (!oMetaGroup) {
 			oMetaGroup = mHandledGroups[iGroupId] = {};
+		} else if (oMetaGroup.oOffTimeout) {
+			// Clear any existing off-timeout
+			clearTimeout(oMetaGroup.oOffTimeout);
 		}
 
 		oGroup.on = bOn;
 		if (bOn) {
-			console.log("Turning on group " + oGroup.name);
+			console.log(new Date() + "Turning on group " + oGroup.name);
 			oGroup.brightness = 184;
 			oGroup.hue = 8411;
 			oGroup.saturation = 140;
 			return oHue.getClient().groups.save(oGroup);
 		}
-		if (oMetaGroup.oOffTimeout) {
-			clearTimeout(oMetaGroup.oOffTimeout);
-		}
 		oMetaGroup.oOffTimeout = setTimeout(function() {
-			console.log("Turning off group " + oGroup.name);
+			console.log(new Date() + "Turning off group " + oGroup.name);
 			oHue.getClient().groups.save(oGroup);
 			mHandledGroups[iGroupId] = null;
 		}, 5000);
 	})
 	.catch(function(err) {
 		console.log(err);
-		console.log("Failed to update group");
+		console.log(new Date() + "Failed to update group");
 	});
 }
 
@@ -128,30 +141,36 @@ function handleLight(iLightId, bOn) {
 		if (oLight.on && !oMetaLight) {
 			// We won't handle this light
 			return;
+		} else if (oMetaLight && ((bOn && oLight.on) || (!bOn && !oLight.on))) {
+			// We handle it and it's already on or off
+			// -> nothing to do
+			// If we wouldn't handle it, we might want to set our color
+			return;
 		}
+
 		if (!oMetaLight) {
 			oMetaLight = mHandledLights[iLightId] = {};
+		} else if (oMetaLight.oOffTimeout) {
+			// Clear any existing off-timeout
+			clearTimeout(oMetaLight.oOffTimeout);
 		}
 
 		oLight.on = bOn;
 		if (bOn) {
-			console.log("Turning on light " + oLight.name);
+			console.log(new Date() + "Turning on light " + oLight.name);
 			oLight.brightness = 184;
 			oLight.hue = 8411;
 			oLight.saturation = 140;
 			return oHue.getClient().lights.save(oLight);
 		}
-		if (oMetaLight.oOffTimeout) {
-			clearTimeout(oMetaLight.oOffTimeout);
-		}
 		oMetaLight.oOffTimeout = setTimeout(function() {
-			console.log("Turning off light " + oLight.name);
+			console.log(new Date() + "Turning off light " + oLight.name);
 			oHue.getClient().lights.save(oLight);
 			mHandledLights[iLightId] = null;
 		}, 5000);
 	})
 	.catch(function(err) {
 		console.log(err);
-		console.log("Failed to update light");
+		console.log(new Date() + "Failed to update light");
 	});
 }
