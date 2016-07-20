@@ -1,6 +1,6 @@
 function Tracker(oSite) {
-	this.oSite = oSite;
-	this.oPosition = {
+	this._oSite = oSite;
+	this._oPosition = {
 		sRoom: null
 	};
 	oSite.attachStateChange(this.handleStateChange.bind(this));
@@ -13,12 +13,12 @@ Tracker.prototype.handleStateChange = function(oStateChange) {
 
 	if (oSensor.getName() === "Motion" && oSensor.getValue() === true) {
 		// Motion!
-		this.oPosition.sRoom = oSensor.getParent().getName();
+		this._oPosition.sRoom = oSensor.getParent().getName();
 	}
 };
 
 Tracker.prototype.isInRoom = function(sRoom) {
-	return sRoom === this.oPosition.sRoom;
+	return sRoom === this._oPosition.sRoom;
 };
 
 module.exports = Tracker;

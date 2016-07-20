@@ -4,7 +4,7 @@ var fs = require("fs"),
 	huejay = require("huejay");
 
 function Hue() {
-	this.ready = this.loadConfig()
+	this._ready = this._loadConfig()
 		.then(function() {
 			return this.connect();
 		}.bind(this))
@@ -13,7 +13,11 @@ function Hue() {
 		}.bind(this));
 }
 
-Hue.prototype.loadConfig = function() {
+Hue.prototype.getReady = function() {
+	return this._ready;
+};
+
+Hue.prototype._loadConfig = function() {
 	return new Promise(function(resolve, reject) {
 		var sHueConfigPath, mUserAttribs, mConfig;
 		sHueConfigPath = path.join(__dirname, "/.hueConfig.json");

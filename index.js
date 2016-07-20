@@ -14,7 +14,7 @@ if (!oConfig.brokerUrl || !oConfig.topics) {
 }
 
 oHue = new Hue();
-oHue.ready
+oHue.getReady()
 	.then(function() {
 		var oMqtt;
 

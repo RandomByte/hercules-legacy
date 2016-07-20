@@ -2,45 +2,45 @@ var Room = require("./room.js"),
 	Tracker = require("./tracker.js");
 
 function Site() {
-	this.mRooms = {};
-	this.aStateChangeListeners = [];
-	this.oTracker = new Tracker(this);
+	this._mRooms = {};
+	this._aStateChangeListeners = [];
+	this._oTracker = new Tracker(this);
 }
 
 Site.prototype.getRoom = function(sRoom) {
-	return this.mRooms[sRoom] || this.createRoom(sRoom);
+	return this._mRooms[sRoom] || this.createRoom(sRoom);
 };
 
 Site.prototype.getRooms = function() {
-	return this.mRooms;
+	return this._mRooms;
 };
 
 Site.prototype.getTracker = function() {
-	return this.oTracker;
+	return this._oTracker;
 };
 
 Site.prototype.createRoom = function(sRoom) {
 	var oRoom;
-	this.mRooms[sRoom] = oRoom = new Room(sRoom, this);
+	this._mRooms[sRoom] = oRoom = new Room(sRoom, this);
 	return oRoom;
 };
 
 Site.prototype.attachStateChange = function(callback) {
-	this.aStateChangeListeners.push(callback);
+	this._aStateChangeListeners.push(callback);
 };
 
 Site.prototype.detachStateChange = function(callback) {
 	var idx;
-	idx = this.aStateChangeListeners.indexOf(callback);
+	idx = this._aStateChangeListeners.indexOf(callback);
 	if (idx > -1) {
-		this.aStateChangeListeners.splice(idx, 1);
+		this._aStateChangeListeners.splice(idx, 1);
 	}
 };
 
 Site.prototype.handleStateChange = function(oStateChange) {
 	var i;
-	for (i = 0; i < this.aStateChangeListeners.length; i++) {
-		this.aStateChangeListeners[i](oStateChange);
+	for (i = 0; i < this._aStateChangeListeners.length; i++) {
+		this._aStateChangeListeners[i](oStateChange);
 	}
 };
 

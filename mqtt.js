@@ -3,12 +3,12 @@ var mqtt = require("mqtt");
 function MqttClient(sBrokerUrl, aTopics) {
 	var that = this;
 
-	this.aMessageHandler = [];
+	this._aMessageHandler = [];
 
-	this.oMqttClient = mqtt.connect(sBrokerUrl);
+	this._oMqttClient = mqtt.connect(sBrokerUrl);
 	console.log("MQTT Broker URL: " + sBrokerUrl);
 
-	this.oMqttClient.on("message", function(sTopic, oPayload) {
+	this._oMqttClient.on("message", function(sTopic, oPayload) {
 		var sSite, sRoom, sSensor, aInfo;
 
 		aInfo = sTopic.split("/");
@@ -24,7 +24,7 @@ function MqttClient(sBrokerUrl, aTopics) {
 			return;
 		}
 
-		that.handleSensorMessage({
+		that._handleSensorMessage({
 			sSite: sSite,
 			sRoom: sRoom,
 			sSensor: sSensor,
@@ -36,27 +36,27 @@ function MqttClient(sBrokerUrl, aTopics) {
 
 MqttClient.prototype.subscribeToTopics = function(aTopics) {
 	// Topics must follow structure "<site>/<room>/<sensor>" or "<site>/<sensor>"
-	this.oMqttClient.subscribe(aTopics, {
+	this._oMqttClient.subscribe(aTopics, {
 		qos: 2
 	});
 };
 
 MqttClient.prototype.attachSensorMessage = function(callback) {
-	this.aMessageHandler.push(callback);
+	this._aMessageHandler.push(callback);
 };
 
 MqttClient.prototype.detachSensorMessage = function(callback) {
 	var idx;
-	idx = this.aMessageHandler.indexOf(callback);
+	idx = this._aMessageHandler.indexOf(callback);
 	if (idx > -1) {
-		this.aMessageHandler.splice(idx, 1);
+		this._aMessageHandler.splice(idx, 1);
 	}
 };
 
-MqttClient.prototype.handleSensorMessage = function(oMessage) {
+MqttClient.prototype._handleSensorMessage = function(oMessage) {
 	var i;
-	for (i = 0; i < this.aMessageHandler.length; i++) {
-		this.aMessageHandler[i](oMessage);
+	for (i = 0; i < this._aMessageHandler.length; i++) {
+		this._aMessageHandler[i](oMessage);
 	}
 };
 

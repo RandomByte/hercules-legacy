@@ -1,25 +1,25 @@
 var sensors = require("./sensor.js").sensors;
 
 function Room(sName, oParent) {
-	this.sName = sName;
-	this.oParent = oParent;
-	this.mSensors = {};
+	this._sName = sName;
+	this._oParent = oParent;
+	this._mSensors = {};
 }
 
 Room.prototype.getName = function() {
-	return this.sName;
+	return this._sName;
 };
 
 Room.prototype.getParent = function() {
-	return this.oParent;
+	return this._oParent;
 };
 
 Room.prototype.getSensor = function(sSensor) {
-	return this.mSensors[sSensor] || this.createSensor(sSensor);
+	return this._mSensors[sSensor] || this.createSensor(sSensor);
 };
 
 Room.prototype.getSensors = function() {
-	return this.mSensors;
+	return this._mSensors;
 };
 
 Room.prototype.createSensor = function(sSensor) {
@@ -34,16 +34,16 @@ Room.prototype.createSensor = function(sSensor) {
 		break;
 	}
 
-	this.mSensors[sSensor] = oSensor;
+	this._mSensors[sSensor] = oSensor;
 	return oSensor;
 };
 
 Room.prototype.isOccupied = function() {
-	return this.getParent().getTracker().isInRoom(this.sName);
+	return this.getParent().getTracker().isInRoom(this._sName);
 };
 
 Room.prototype.handleStateChange = function(oStateChange) {
-	this.oParent.handleStateChange(oStateChange);
+	this.getParent().handleStateChange(oStateChange);
 };
 
 module.exports = Room;

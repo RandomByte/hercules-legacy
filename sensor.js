@@ -1,43 +1,43 @@
 function Sensor(sName, oParent) {
-	this.sName = sName;
-	this.oParent = oParent;
+	this._sName = sName;
+	this._oParent = oParent;
 
-	this.vLastValue = null;
-	this.vValue = null;
+	this._vLastValue = null;
+	this._vValue = null;
 }
 
 Sensor.prototype.getName = function() {
-	return this.sName;
+	return this._sName;
 };
 
 Sensor.prototype.getParent = function() {
-	return this.oParent;
+	return this._oParent;
 };
 
 Sensor.prototype.setValue = function(vValue) {
 	var vParsedValue;
-	vParsedValue = this.parseValue(vValue);
+	vParsedValue = this._parseValue(vValue);
 
-	if (vParsedValue === this.vValue) {
+	if (vParsedValue === this._vValue) {
 		// Value hasn't changed
 		return;
 	}
 
-	this.vLastValue = this.vValue;
-	this.vValue = vParsedValue;
-	this.handleValueChange();
+	this._vLastValue = this._vValue;
+	this._vValue = vParsedValue;
+	this._handleValueChange();
 };
 
 Sensor.prototype.getValue = function() {
-	return this.vValue;
+	return this._vValue;
 };
 
-Sensor.prototype.parseValue = function(vValue) {
+Sensor.prototype._parseValue = function(vValue) {
 	return vValue;
 };
 
-Sensor.prototype.handleValueChange = function() {
-	this.oParent.handleStateChange({
+Sensor.prototype._handleValueChange = function() {
+	this.getParent().handleStateChange({
 		oSource: this
 	});
 	return;
@@ -51,7 +51,7 @@ function MotionSensor() {
 MotionSensor.prototype = Object.create(Sensor.prototype);
 MotionSensor.prototype.constructor = Sensor;
 
-MotionSensor.prototype.parseValue = function(vValue) {
+MotionSensor.prototype._parseValue = function(vValue) {
 	// Value is "0" or "1"
 	// -> parsing to true or false
 	return Boolean(parseInt(vValue, 10));
