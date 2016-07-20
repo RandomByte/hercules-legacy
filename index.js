@@ -75,6 +75,9 @@ function handleRoom(oRoom) {
 	}
 
 	bMotion = oRoom.getSensor("Motion").getValue();
+	if (!bMotion && oRoom.isOccupied()) {
+		return; // Do nothing
+	}
 	oGroup = oHue.getGroupByName(sHueRoom);
 	handleGroup(oGroup.sId, bMotion);
 }

@@ -1,8 +1,10 @@
-var Room = require("./room.js");
+var Room = require("./room.js"),
+	Tracker = require("./tracker.js");
 
 function Site() {
 	this.mRooms = {};
 	this.aStateChangeListeners = [];
+	this.oTracker = new Tracker(this);
 }
 
 Site.prototype.getRoom = function(sRoom) {
@@ -11,6 +13,10 @@ Site.prototype.getRoom = function(sRoom) {
 
 Site.prototype.getRooms = function() {
 	return this.mRooms;
+};
+
+Site.prototype.getTracker = function() {
+	return this.oTracker;
 };
 
 Site.prototype.createRoom = function(sRoom) {

@@ -38,6 +38,10 @@ Room.prototype.createSensor = function(sSensor) {
 	return oSensor;
 };
 
+Room.prototype.isOccupied = function() {
+	return this.getParent().getTracker().isInRoom(this.sName);
+};
+
 Room.prototype.handleStateChange = function(oStateChange) {
 	this.oParent.handleStateChange(oStateChange);
 };
