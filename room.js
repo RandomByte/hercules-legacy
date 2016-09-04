@@ -6,44 +6,46 @@ function Room(sName, oParent) {
 	this._mSensors = {};
 }
 
-Room.prototype.getName = function() {
-	return this._sName;
-};
+Room.prototype = {
+	getName: function() {
+		return this._sName;
+	},
 
-Room.prototype.getParent = function() {
-	return this._oParent;
-};
+	getParent: function() {
+		return this._oParent;
+	},
 
-Room.prototype.getSensor = function(sSensor) {
-	return this._mSensors[sSensor] || this.createSensor(sSensor);
-};
+	getSensor: function(sSensor) {
+		return this._mSensors[sSensor] || this.createSensor(sSensor);
+	},
 
-Room.prototype.getSensors = function() {
-	return this._mSensors;
-};
+	getSensors: function() {
+		return this._mSensors;
+	},
 
-Room.prototype.createSensor = function(sSensor) {
-	var oSensor;
+	createSensor: function(sSensor) {
+		var oSensor;
 
-	switch (sSensor) {
-	case "Motion":
-		oSensor = new sensors.MotionSensor(sSensor, this);
-		break;
-	default:
-		oSensor = new sensors.Sensor(sSensor, this);
-		break;
+		switch (sSensor) {
+		case "Motion":
+			oSensor = new sensors.MotionSensor(sSensor, this);
+			break;
+		default:
+			oSensor = new sensors.Sensor(sSensor, this);
+			break;
+		}
+
+		this._mSensors[sSensor] = oSensor;
+		return oSensor;
+	},
+
+	isOccupied: function() {
+		return this.getParent().getTracker().isInRoom(this._sName);
+	},
+
+	handleStateChange: function(oStateChange) {
+		this.getParent().handleStateChange(oStateChange);
 	}
-
-	this._mSensors[sSensor] = oSensor;
-	return oSensor;
-};
-
-Room.prototype.isOccupied = function() {
-	return this.getParent().getTracker().isInRoom(this._sName);
-};
-
-Room.prototype.handleStateChange = function(oStateChange) {
-	this.getParent().handleStateChange(oStateChange);
 };
 
 module.exports = Room;

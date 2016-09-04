@@ -6,41 +6,43 @@ function Sensor(sName, oParent) {
 	this._vValue = null;
 }
 
-Sensor.prototype.getName = function() {
-	return this._sName;
-};
+Sensor.prototype = {
+	getName: function() {
+		return this._sName;
+	},
 
-Sensor.prototype.getParent = function() {
-	return this._oParent;
-};
+	getParent: function() {
+		return this._oParent;
+	},
 
-Sensor.prototype.setValue = function(vValue) {
-	var vParsedValue;
-	vParsedValue = this._parseValue(vValue);
+	setValue: function(vValue) {
+		var vParsedValue;
+		vParsedValue = this._parseValue(vValue);
 
-	if (vParsedValue === this._vValue) {
-		// Value hasn't changed
+		if (vParsedValue === this._vValue) {
+			// Value hasn't changed
+			return;
+		}
+
+		this._vLastValue = this._vValue;
+		this._vValue = vParsedValue;
+		this._handleValueChange();
+	},
+
+	getValue: function() {
+		return this._vValue;
+	},
+
+	_parseValue: function(vValue) {
+		return vValue;
+	},
+
+	_handleValueChange: function() {
+		this.getParent().handleStateChange({
+			oSource: this
+		});
 		return;
 	}
-
-	this._vLastValue = this._vValue;
-	this._vValue = vParsedValue;
-	this._handleValueChange();
-};
-
-Sensor.prototype.getValue = function() {
-	return this._vValue;
-};
-
-Sensor.prototype._parseValue = function(vValue) {
-	return vValue;
-};
-
-Sensor.prototype._handleValueChange = function() {
-	this.getParent().handleStateChange({
-		oSource: this
-	});
-	return;
 };
 
 /* Motion sensor */

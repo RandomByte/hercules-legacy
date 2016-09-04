@@ -34,29 +34,31 @@ function MqttClient(sBrokerUrl, aTopics) {
 	this.subscribeToTopics(aTopics);
 }
 
-MqttClient.prototype.subscribeToTopics = function(aTopics) {
-	// Topics must follow structure "<site>/<room>/<sensor>" or "<site>/<sensor>"
-	this._oMqttClient.subscribe(aTopics, {
-		qos: 2
-	});
-};
+MqttClient.prototype = {
+	subscribeToTopics: function(aTopics) {
+		// Topics must follow structure "<site>/<room>/<sensor>" or "<site>/<sensor>"
+		this._oMqttClient.subscribe(aTopics, {
+			qos: 2
+		});
+	},
 
-MqttClient.prototype.attachSensorMessage = function(callback) {
-	this._aMessageHandler.push(callback);
-};
+	attachSensorMessage: function(callback) {
+		this._aMessageHandler.push(callback);
+	},
 
-MqttClient.prototype.detachSensorMessage = function(callback) {
-	var idx;
-	idx = this._aMessageHandler.indexOf(callback);
-	if (idx > -1) {
-		this._aMessageHandler.splice(idx, 1);
-	}
-};
+	detachSensorMessage: function(callback) {
+		var idx;
+		idx = this._aMessageHandler.indexOf(callback);
+		if (idx > -1) {
+			this._aMessageHandler.splice(idx, 1);
+		}
+	},
 
-MqttClient.prototype._handleSensorMessage = function(oMessage) {
-	var i;
-	for (i = 0; i < this._aMessageHandler.length; i++) {
-		this._aMessageHandler[i](oMessage);
+	_handleSensorMessage: function(oMessage) {
+		var i;
+		for (i = 0; i < this._aMessageHandler.length; i++) {
+			this._aMessageHandler[i](oMessage);
+		}
 	}
 };
 
