@@ -1,0 +1,19 @@
+# Template for hercules systemd service
+# 1. Place under /etc/systemd/system/hercules.service
+# 2. Fill in working dir, user and group
+# 3. Run sudo systemctl enable hercules
+# 4. Run sudo systemctl start hercules
+# 5. Check the log by running sudo journalctl -f -u hercules
+[Service]
+ExecStart=/usr/bin/supervisor -q -e json index.js
+WorkingDirectory=<working dir>
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=hercules
+User=<user>
+Group=<group>
+
+[Install]
+WantedBy=multi-user.target
