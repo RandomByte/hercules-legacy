@@ -6,7 +6,7 @@ var oConfig = require("./config.json"),
 	oHueWrapper,
 	mSites = {};
 
-if (!oConfig.brokerUrl || !oConfig.topics) {
+if (!oConfig.brokerUrl || !oConfig.topics || !oConfig.mqttTopicRoomToHueGroupMapping) {
 	console.log("There's something missing in your config.json, please refer to config.example.json for an example");
 	process.exit(1);
 }
@@ -68,7 +68,7 @@ function handleRoom(oRoom) {
 	sRoom = oRoom.getName();
 
 	if (oConfig.mqttTopicRoomToHueGroupMapping) {
-		// Do the mapping
+		// Do the mapping between mqtt topic names and hue names
 		sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
 	}
 

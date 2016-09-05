@@ -19,7 +19,7 @@ function MqttClient(sBrokerUrl, aTopics) {
 		if (!sSensor) { // "<site>/<sensor>" - currently not supported -> return
 			sSensor = sRoom;
 			sRoom = null;
-			console.log(new Date() + " - Aborting message handling for topic " + sTopic +
+			console.log("Aborting message handling for topic " + sTopic +
 							": Site based sensors not yet implemented");
 			return;
 		}

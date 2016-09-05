@@ -22,7 +22,7 @@ Hue.prototype = {
 	_loadConfig: function() {
 		return new Promise(function(resolve, reject) {
 			var sHueConfigPath, mUserAttribs, mConfig;
-			sHueConfigPath = path.join(__dirname, "/.hueConfig.json");
+			sHueConfigPath = path.join(__dirname, ".hueConfig.json");
 			try {
 				fs.statSync(sHueConfigPath).isFile();
 				mConfig = jsonfile.readFileSync(sHueConfigPath);

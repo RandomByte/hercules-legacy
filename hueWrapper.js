@@ -54,21 +54,21 @@ HueWrapper.prototype = {
 
 			oGroup.on = bOn;
 			if (bOn) {
-				console.log(new Date() + " Turning on group " + oGroup.name);
+				console.log("Turning on group " + oGroup.name);
 				oGroup.brightness = 184;
 				oGroup.hue = 8411;
 				oGroup.saturation = 140;
 				return that.oHue.getClient().groups.save(oGroup);
 			}
 			oMetaGroup.oOffTimeout = setTimeout(function() {
-				console.log(new Date() + " Turning off group " + oGroup.name);
+				console.log("Turning off group " + oGroup.name);
 				that.oHue.getClient().groups.save(oGroup);
 				that.mHandledGroups[iGroupId] = null;
 			}, 5000);
 		})
 		.catch(function(err) {
 			console.log(err);
-			console.log(new Date() + " Failed to update group");
+			console.log("Failed to update group");
 		});
 	},
 
@@ -104,21 +104,21 @@ HueWrapper.prototype = {
 
 			oLight.on = bOn;
 			if (bOn) {
-				console.log(new Date() + " Turning on light " + oLight.name);
+				console.log("Turning on light " + oLight.name);
 				oLight.brightness = 184;
 				oLight.hue = 8411;
 				oLight.saturation = 140;
 				return that.oHue.getClient().lights.save(oLight);
 			}
 			oMetaLight.oOffTimeout = setTimeout(function() {
-				console.log(new Date() + " Turning off light " + oLight.name);
+				console.log("Turning off light " + oLight.name);
 				that.oHue.getClient().lights.save(oLight);
 				that.mHandledLights[iLightId] = null;
 			}, 5000);
 		})
 		.catch(function(err) {
 			console.log(err);
-			console.log(new Date() + " Failed to update light");
+			console.log("Failed to update light");
 		});
 	}
 };
