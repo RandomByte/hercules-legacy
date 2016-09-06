@@ -1,3 +1,5 @@
+var debug = require("debug")("hercules:tracker");
+
 function Tracker(oSite) {
 	this._oSite = oSite;
 	this._oPosition = {
@@ -15,6 +17,7 @@ Tracker.prototype = {
 		if (oSensor.getName() === "Motion" && oSensor.getValue() === true) {
 			// Motion!
 			this._oPosition.sRoom = oSensor.getParent().getName();
+			debug("Position changed to room %s", this._oPosition.sRoom);
 		}
 	},
 

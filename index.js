@@ -1,4 +1,5 @@
-var oConfig = require("./config.json"),
+var debug = require("debug")("hercules:main"),
+	oConfig = require("./config.json"),
 	Site = require("./site.js"),
 	HueWrapper = require("./hueWrapper.js"),
 	MqttClient = require("./mqtt.js"),
@@ -38,11 +39,17 @@ function handleSensorMessage(oMessage) {
 	oSite = mSites[sSite];
 	if (!oSite) {
 		// Creating new site
-		oSite = mSites[sSite] = new Site();
+		oSite = mSites[sSite] = new Site(sSite);
 		oSite.attachStateChange(handleStateChange);
 	}
-	oRoom = oSite.getRoom(sRoom);
-	oSensor = oRoom.getSensor(sSensor);
+
+	if (sRoom === null) { // Site based sensor
+		oSensor = oSite.getSensor(sSensor);
+	} else {
+		oRoom = oSite.getRoom(sRoom);
+		oSensor = oRoom.getSensor(sSensor);
+	}
+
 	oSensor.setValue(oPayload);
 }
 
@@ -53,9 +60,14 @@ function handleStateChange(oStateChange) {
 	oSensor = oStateChange.oSource;
 	sSensorName = oSensor.getName();
 
+	debug("State of sensor %s (%s) changed to %s", sSensorName, oSensor.getParent().getName(), oSensor.getValue());
+
 	switch (sSensorName) {
 	case "Motion":
 		handleRoom(oSensor.getParent());
+		break;
+	case "Luminosity":
+		handleSite(oSensor.getParent().getParent());
 		break;
 	default:
 		break;
@@ -63,19 +75,45 @@ function handleStateChange(oStateChange) {
 }
 
 function handleRoom(oRoom) {
-	var bMotion, sRoom, sHueRoom;
+	var bMotion, iLum, sRoom, sHueRoom,
+		oSite;
 
 	sRoom = oRoom.getName();
+	debug("Handling room %s", sRoom);
 
 	if (oConfig.mqttTopicRoomToHueGroupMapping) {
 		// Do the mapping between mqtt topic names and hue names
 		sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
 	}
 
+	/* Occupancy check */
 	bMotion = oRoom.getSensor("Motion").getValue();
 	if (!bMotion && oRoom.isOccupied()) {
-		return; // Do nothing
+		debug("[No Action]: No motion but somebody is in the room");
+		return; // => do nothing
 	}
 
+	/* Luminosity check */
+	if (bMotion) {
+		oSite = oRoom.getParent();
+		iLum = oSite.getSensor("Luminosity").getValue();
+		if (iLum > 3) {
+			debug("[No Action]: Too bright");
+			return; // => do nothing
+		}
+	}
+
+	// Hand over to hue
 	oHueWrapper.handleGroup(sHueRoom, bMotion);
+}
+
+function handleSite(oSite) {
+	var sName, mRooms;
+
+	mRooms = oSite.getRooms();
+	for (sName in mRooms) {
+		if (mRooms.hasOwnProperty(sName)) {
+			handleRoom(mRooms[sName]);
+		}
+	}
 }

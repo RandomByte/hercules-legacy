@@ -30,6 +30,9 @@ Room.prototype = {
 		case "Motion":
 			oSensor = new sensors.MotionSensor(sSensor, this);
 			break;
+		case "Luminosity":
+			oSensor = new sensors.LuminositySensor(sSensor, this);
+			break;
 		default:
 			oSensor = new sensors.Sensor(sSensor, this);
 			break;

@@ -1,10 +1,12 @@
 var Room = require("./room.js"),
 	Tracker = require("./tracker.js");
 
-function Site() {
+function Site(sName) {
+	this._sName = sName;
 	this._mRooms = {};
 	this._aStateChangeListeners = [];
 	this._oTracker = new Tracker(this);
+	this._oSiteRoom = new Room("<" + sName + ">", this);
 }
 
 Site.prototype = {
@@ -43,6 +45,10 @@ Site.prototype = {
 		for (i = 0; i < this._aStateChangeListeners.length; i++) {
 			this._aStateChangeListeners[i](oStateChange);
 		}
+	},
+
+	getSensor: function() {
+		return this._oSiteRoom.getSensor.apply(this._oSiteRoom, arguments);
 	}
 };
 

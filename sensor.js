@@ -59,7 +59,32 @@ MotionSensor.prototype._parseValue = function(vValue) {
 	return Boolean(parseInt(vValue, 10));
 };
 
+/* Luminosity sensor */
+function LuminositySensor() {
+	var iSensorMax, iOutMax;
+
+	this._iSensorMin = 0;
+	this._iOutMin = 0;
+	iSensorMax = 1023;
+	iOutMax = 20;
+	this._iSlope = (iOutMax - this._iOutMin) / (iSensorMax - this._iSensorMin);
+
+	Sensor.apply(this, arguments);
+}
+
+LuminositySensor.prototype = Object.create(Sensor.prototype);
+LuminositySensor.prototype.constructor = Sensor;
+
+LuminositySensor.prototype._parseValue = function(vValue) {
+	var iLum;
+	iLum = parseInt(vValue, 10);
+
+	// Map to range of 0-20 (see constructor for up-to-date max)
+	return Math.round(this._iOutMin + this._iSlope * (iLum - this._iSensorMin));
+};
+
 module.exports.sensors = {
 	Sensor: Sensor,
-	MotionSensor: MotionSensor
+	MotionSensor: MotionSensor,
+	LuminositySensor: LuminositySensor
 };
