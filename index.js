@@ -1,4 +1,5 @@
 var debug = require("debug")("hercules:main"),
+	path = require("path"),
 	oConfig = require("./config.json"),
 	Site = require("./lib/zones/site.js"),
 	HueWrapper = require("./lib/hue/hueWrapper.js"),
@@ -12,7 +13,9 @@ if (!oConfig.brokerUrl || !oConfig.topics || !oConfig.mqttTopicRoomToHueGroupMap
 	process.exit(1);
 }
 
-oHueWrapper = new HueWrapper();
+oHueWrapper = new HueWrapper({
+	sHueConfigPath: path.join(__dirname, ".hueConfig.json")
+});
 
 oHueWrapper.getReady()
 	.then(function() {
