@@ -57,5 +57,5 @@ Site 1..n Sensor
 **Examples:**  
 `/Home/Kitchen/Temperature`  
 `/Work/Hallway/Motion`  
-`/Home/Light`
+`/Home/Luminosity`
 
