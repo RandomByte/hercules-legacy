@@ -1,8 +1,8 @@
 var debug = require("debug")("hercules:main"),
 	oConfig = require("./config.json"),
-	Site = require("./site.js"),
-	HueWrapper = require("./hueWrapper.js"),
-	MqttClient = require("./mqtt.js"),
+	Site = require("./lib/zones/site.js"),
+	HueWrapper = require("./lib/hue/hueWrapper.js"),
+	MqttClient = require("./lib/mqtt/mqtt.js"),
 
 	oHueWrapper,
 	mSites = {};
@@ -24,6 +24,7 @@ oHueWrapper.getReady()
 		});
 	})
 	.catch(function(err) {
+		console.log("Hue connection initialization failed:");
 		console.log(err);
 	});
 
@@ -39,8 +40,13 @@ function handleSensorMessage(oMessage) {
 	oSite = mSites[sSite];
 	if (!oSite) {
 		// Creating new site
-		oSite = mSites[sSite] = new Site(sSite);
-		oSite.attachStateChange(handleStateChange);
+		oSite = mSites[sSite] = new Site({
+			sName: sSite,
+			oHueWrapper: oHueWrapper,
+			oConfig: oConfig
+		});
+		oSite.attachConditionChange(handleConditionChange);
+		oSite.attachSensorChange(handleSensorChange);
 	}
 
 	if (sRoom === null) { // Site based sensor
@@ -53,11 +59,30 @@ function handleSensorMessage(oMessage) {
 	oSensor.setValue(oPayload);
 }
 
-function handleStateChange(oStateChange) {
+function handleConditionChange(oConditionChange) {
+	var sConditionName,
+		oCondition;
+
+	oCondition = oConditionChange.oSource;
+	sConditionName = oCondition.getName();
+
+	debug("State of Condition %s (%s) changed", sConditionName, oCondition.getParent().getName());
+
+	switch (sConditionName) {
+	case "Tracker":
+		handleSite(oCondition.getParent());
+		break;
+	default:
+		debug("Unhandled condition %s", sConditionName);
+		break;
+	}
+}
+
+function handleSensorChange(oSensorChange) {
 	var sSensorName,
 		oSensor;
 
-	oSensor = oStateChange.oSource;
+	oSensor = oSensorChange.oSource;
 	sSensorName = oSensor.getName();
 
 	debug("State of sensor %s (%s) changed to %s", sSensorName, oSensor.getParent().getName(), oSensor.getValue());
@@ -70,41 +95,9 @@ function handleStateChange(oStateChange) {
 		handleSite(oSensor.getParent().getParent());
 		break;
 	default:
+		debug("Unhandled sensor %s", sSensorName);
 		break;
 	}
-}
-
-function handleRoom(oRoom) {
-	var bMotion, iLum, sRoom, sHueRoom,
-		oSite;
-
-	sRoom = oRoom.getName();
-	debug("Handling room %s", sRoom);
-
-	if (oConfig.mqttTopicRoomToHueGroupMapping) {
-		// Do the mapping between mqtt topic names and hue names
-		sHueRoom = oConfig.mqttTopicRoomToHueGroupMapping[sRoom] || sRoom;
-	}
-
-	/* Occupancy check */
-	bMotion = oRoom.getSensor("Motion").getValue();
-	if (!bMotion && oRoom.isOccupied()) {
-		debug("[No Action]: No motion but somebody is in the room");
-		return; // => do nothing
-	}
-
-	/* Luminosity check */
-	if (bMotion) {
-		oSite = oRoom.getParent();
-		iLum = oSite.getSensor("Luminosity").getValue();
-		if (iLum > 3) {
-			debug("[No Action]: Too bright");
-			return; // => do nothing
-		}
-	}
-
-	// Hand over to hue
-	oHueWrapper.handleGroup(sHueRoom, bMotion);
 }
 
 function handleSite(oSite) {
@@ -116,4 +109,8 @@ function handleSite(oSite) {
 			handleRoom(mRooms[sName]);
 		}
 	}
+}
+
+function handleRoom(oRoom) {
+	oRoom.updateLight();
 }
