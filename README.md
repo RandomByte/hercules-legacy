@@ -12,7 +12,7 @@ Note that this reflects **my** current setup. Yours may differ in various ways. 
 ### Central server
 There is one central server, running the MQTT broker **[Mosquitto](https://mosquitto.org/)** and hercules.
 
-Currently that's a Raspberry Pi B 3 connected via Gigabit Ethernet. But you may use any other system to run hercules. Just remember that fast hardware with a good network connection will reduce the latency between input (e.g. Motion sensors detects motion) and output (e.g. Hue Lights turns on).
+Currently that's a Raspberry Pi B 2 connected via Gigabit Ethernet. But you may use any other system to run hercules. Just remember that fast hardware with a good network connection will reduce the latency between input (e.g. Motion sensors detects motion) and output (e.g. Hue Lights turns on).
 
 Use a Node.js version >=6.6.0 (this project uses some ES6 functionality which is not or only partially supported by lower releases of Node.js - confirmed to not work with at least 4.4.7).
 
