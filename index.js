@@ -69,10 +69,14 @@ function handleConditionChange(oConditionChange) {
 	oCondition = oConditionChange.oSource;
 	sConditionName = oCondition.getName();
 
-	debug("State of Condition %s (%s) changed", sConditionName, oCondition.getParent().getName());
+	debug("State of Condition %s (%s) changed to %s", sConditionName,
+				oCondition.getParent().getName(), oCondition.getLogValue());
 
 	switch (sConditionName) {
-	case "Tracker":
+	case "RoomTracker":
+		handleSite(oCondition.getParent());
+		break;
+	case "PresenceScorer":
 		handleSite(oCondition.getParent());
 		break;
 	default:
