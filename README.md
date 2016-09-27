@@ -40,6 +40,9 @@ That's a simple ESP8266 (NodeMCU) with an LDR soldered to it.
 
 Steps for deamonized autorun will follow when it gets more stable.
 
+## Debugging
+Run with `DEBUG=hercules:* node index.js` to get verbose logging. Make sure to run `npm install` (without the production flag) to install the debug module.
+
 ## Contributing
 - Use [ESLint](http://eslint.org/) and make sure to install all development dependencies using `npm install` (without the production flag)
 
