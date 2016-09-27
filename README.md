@@ -5,13 +5,16 @@ Current status: Test-running it in my flat. There are motion detectors in every 
 A central Raspberry Pi running hercules retrieves all the sensor data and decides when to turn on or off which light. 
 
 
-## My Setup
+## Setup
+Note that this reflects **my** current setup. Yours may differ in various ways. Choose your hardware wisely.
+
+
 ### Central server
 There is one central server, running the MQTT broker **[Mosquitto](https://mosquitto.org/)** and hercules.
 
-Currently that's a Raspberry Pi A+ with a WiFi dongle. It was just a leftover from another project, so I rould rather recommend a B one (or any other computer running some kind of Debian).
+Currently that's a Raspberry Pi B 3 connected via Gigabit Ethernet. But you may use any other system to run hercules. Just remember that fast hardware with a good network connection will reduce the latency between input (e.g. Motion sensors detects motion) and output (e.g. Hue Lights turns on).
 
-You need to have a Node.js version above 4. 
+Use a Node.js version >=6.6.0 (this project uses some ES6 functionality which is not or only partially supported by lower releases of Node.js - confirmed to not work with at least 4.4.7).
 
 ### Motion Detectors
 Find the corresponding project here: [github.com/RandomByte/mqtt-nodemotion](https://github.com/RandomByte/mqtt-nodemotion)
