@@ -12,7 +12,7 @@ Note that this reflects **my** current setup. Yours may differ in various ways. 
 ### Central server
 There is one central server, running the MQTT broker **[Mosquitto](https://mosquitto.org/)** and hercules.
 
-Currently that's a Raspberry Pi B 2 connected via Gigabit Ethernet. But you may use any other system to run hercules. Just remember that fast hardware with a good network connection will reduce the latency between input (e.g. Motion sensors detects motion) and output (e.g. Hue Lights turns on).
+Currently that's a Raspberry Pi 2 Model B connected via Gigabit Ethernet. But you may use any other system to run hercules. Just remember that fast hardware with a good network connection will reduce the latency between input (e.g. Motion sensors detects motion) and output (e.g. Hue Lights turns on).
 
 Use a Node.js version >=6.6.0 (this project uses some ES6 functionality which is not or only partially supported by lower releases of Node.js - confirmed to not work with at least 4.4.7).
 
@@ -23,7 +23,7 @@ Find the corresponding project here: [github.com/RandomByte/mqtt-nodemotion](htt
 
 I'm using **HC-SR501 PIR** Motion Detectors. Citing from the [spec](https://www.mpja.com/download/31227sc.pdf) they run with 5V and have a range up to 7 meters. I have them set to *repeat trigger mode*, *full sensing distance* and *shortest delay*.
 
-In my case each motion detector is connected to an [Onion Omega](https://onion.io/) which runs OpenWRT. The linux is actually the only reason why they are running Node.js for this job. Feel free to do this in C with the same or any other microcontroller as long as it can provide the neccessary 5V and has some sort of connectivity.
+In my case each motion detector is connected to an [Onion Omega](https://onion.io/) which runs OpenWRT. The fact that they run Linux is actually the only reason why they are running Node.js for this job. Feel free to do this in C with the same or any other microcontroller as long as it can provide the necessary 5V and has some sort of connectivity.
 
 ### Light sensor
 Find the corresponding project here: [github.com/RandomByte/esp8266-mqtt-light-sensor](https://github.com/RandomByte/esp8266-mqtt-light-sensor)
