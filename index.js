@@ -48,8 +48,6 @@ function handleSensorMessage(oMessage) {
 			oHueWrapper: oHueWrapper,
 			oConfig: oConfig
 		});
-		oSite.attachConditionChange(handleConditionChange);
-		oSite.attachSensorChange(handleSensorChange);
 	}
 
 	if (sRoom === null) { // Site based sensor
@@ -60,64 +58,4 @@ function handleSensorMessage(oMessage) {
 	}
 
 	oSensor.setValue(oPayload);
-}
-
-function handleConditionChange(oConditionChange) {
-	var sConditionName,
-		oCondition;
-
-	oCondition = oConditionChange.oSource;
-	sConditionName = oCondition.getName();
-
-	debug("State of Condition %s (%s) changed to %s", sConditionName,
-				oCondition.getParent().getName(), oCondition.getLogValue());
-
-	switch (sConditionName) {
-	case "RoomTracker":
-		handleSite(oCondition.getParent());
-		break;
-	case "PresenceScorer":
-		handleSite(oCondition.getParent());
-		break;
-	default:
-		debug("Unhandled condition %s", sConditionName);
-		break;
-	}
-}
-
-function handleSensorChange(oSensorChange) {
-	var sSensorName,
-		oSensor;
-
-	oSensor = oSensorChange.oSource;
-	sSensorName = oSensor.getName();
-
-	debug("State of sensor %s (%s) changed to %s", sSensorName, oSensor.getParent().getName(), oSensor.getValue());
-
-	switch (sSensorName) {
-	case "Motion":
-		handleRoom(oSensor.getParent());
-		break;
-	case "Luminosity":
-		handleSite(oSensor.getParent().getParent());
-		break;
-	default:
-		debug("Unhandled sensor %s", sSensorName);
-		break;
-	}
-}
-
-function handleSite(oSite) {
-	var sName, mRooms;
-
-	mRooms = oSite.getRooms();
-	for (sName in mRooms) {
-		if (mRooms.hasOwnProperty(sName)) {
-			handleRoom(mRooms[sName]);
-		}
-	}
-}
-
-function handleRoom(oRoom) {
-	oRoom.updateLight();
 }
