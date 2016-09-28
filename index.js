@@ -1,7 +1,7 @@
 var debug = require("debug")("hercules:main"),
 	path = require("path"),
 	oConfig = require("./config.json"),
-	Site = require("./lib/zones/site.js"),
+	Site = require("./lib/site/site.js"),
 	HueWrapper = require("./lib/hue/hueWrapper.js"),
 	MqttClient = require("./lib/mqtt/mqtt.js"),
 
@@ -20,7 +20,7 @@ oHueWrapper = new HueWrapper({
 oHueWrapper.getReady()
 	.then(function() {
 		var oMqtt;
-
+		debug("Hue Wrapper ready. Connecting to MQTT broker...");
 		oMqtt = new MqttClient(oConfig.brokerUrl, oConfig.topics);
 		oMqtt.attachSensorMessage(function(oMessage) {
 			handleSensorMessage(oMessage);
