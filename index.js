@@ -4,11 +4,12 @@ var debug = require("debug")("hercules:main"),
 	Site = require("./lib/site/site.js"),
 	HueWrapper = require("./lib/hue/hueWrapper.js"),
 	MqttClient = require("./lib/mqtt/mqtt.js"),
+	RestServer = require("./lib/api/restServer.js"),
 
-	oHueWrapper,
+	oHueWrapper, oRestServer,
 	mSites = {};
 
-if (!oConfig.brokerUrl || !oConfig.topics || !oConfig.mqttTopicRoomToHueGroupMapping) {
+if (!oConfig.brokerUrl || !oConfig.topics || !oConfig.mqttTopicRoomToHueGroupMapping || !oConfig.iHttpPort) {
 	console.log("There's something missing in your config.json, please refer to config.example.json for an example");
 	process.exit(1);
 }
@@ -59,3 +60,7 @@ function handleSensorMessage(oMessage) {
 
 	oSensor.setValue(oPayload);
 }
+
+oRestServer = new RestServer({
+	iHttpPort: oConfig.iHttpPort
+});

@@ -10,5 +10,6 @@
 		"livingRoom": "Wohnzimmer",
 		"bedroom": "Schlafzimmer"
 	},
-    "brokerUrl": "mqtt://test.mosquitto.org"
+    "brokerUrl": "mqtt://test.mosquitto.org",
+    "iHttpPort": 42000
 }

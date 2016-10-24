@@ -1,6 +1,7 @@
 {
     "env": {
-        "node": true
+        "node": true,
+        "browser": true
     },
     "extends": "google",
     "rules": {
@@ -25,5 +26,9 @@
         "one-var": ["error", "always"],
         "no-mixed-requires": "off",
         "max-len": ["warn", 120]
+    },
+    "globals": {
+        "jQuery": true,
+        "hercules": true
     }
 }
