@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 
-	<title>Hercules</title>
+	<title>hercules</title>
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
@@ -14,44 +14,37 @@
 </head>
 <body>
 	<nav class="navbar navbar-static-top navbar-dark bg-inverse">
-		<a class="navbar-brand" href="#">Hercules</a>
+		<a class="navbar-brand" href="#">hercules</a>
 	</nav>
 
 	<div class="jumbotron">
 		<div class="container">
-			<h1 class="display-3">Hercules</h1>
+			<h1 class="display-3">hercules</h1>
 		</div>
 	</div>
 
 	<div class="container">
-		<div class="card-deck-wrapper">
-			<div class="card-deck">
-				<div id="overall-status-card" class="card card-inverse">
-					<div class="card-block">
-						<h4 class="card-title">System Status</h4>
-						<p id="overall-status-text" class="card-text">Loading...</p>
-						<button id="overall-status-toggle-button" class="btn btn-block" type="submit" disabled="">Loading...</button>
-					</div>
-				</div>
-				<div class="card card-inverse card-primary">
-					<div class="card-block">
-						<h4 class="card-title">Handled Lights</h4>
-						<p class="card-text" id="overall-status-text">...</p>
-					</div>
-				</div>
-				<div class="card card-inverse card-primary">
-					<div class="card-block">
-						<h4 class="card-title">Ponies on site</h4>
-						<p class="card-text" id="overall-status-text">...</p>
-					</div>
-				</div>
-			</div>
-		</div>
+		<h1>States</h1>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>State</th>
+					<th>Value</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="stateTable">
+				<tr id="bProcessSensorInput">
+					<th scope="row">Process Sensor Input</th>
+					<td class="hercules-state-text text-uppercase">Loading...</td>
+					<td><button class="btn btn-primary hercules-state-toggle-button" width="2em" type="submit"="">Toggle</button></td>
+				</tr>
+			</tbody>
+		</table>
 
 		<hr>
-
 		<footer>
-			<p><a href="https://github.com/RandomByte/hercules">Hercules on GitHub</a></p>
+			<p><a href="https://github.com/RandomByte/hercules">hercules on GitHub</a></p>
 		</footer>
 	</div>
 

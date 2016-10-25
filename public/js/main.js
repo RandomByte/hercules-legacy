@@ -12,14 +12,21 @@ hercules.App = class {
 	_registerButtonHandlers() {
 		var that = this;
 
-		jQuery("#overall-status-toggle-button").click(function() {
-			var oButton = jQuery(this);
-			oButton.prop("disabled", true);
-			oButton.text("Loading...");
-			that.toggleStatus({
-				bHandleSensorInput: !that.oStatus.bHandleSensorInput
-			}, function() {
-				oButton.prop("disabled", false);
+		jQuery("#stateTable tr").each(function() { // Loop over all rows
+			// Register to buttons of rows generically
+			jQuery(this).find(".hercules-state-toggle-button").click(this.id, function(oEvent) {
+				var oStatusChange,
+					oButton = jQuery(this);
+
+				oButton.prop("disabled", true);
+				oButton.addClass("active");
+
+				oStatusChange = {};
+				oStatusChange[oEvent.data] = !that.oStatus[oEvent.data];
+				that.toggleStatus(oStatusChange, function() {
+					oButton.prop("disabled", false);
+					oButton.removeClass("active");
+				});
 			});
 		});
 	}
@@ -52,39 +59,23 @@ hercules.App = class {
 	}
 
 	_updateStatus() {
-		jQuery("#overall-status-card").removeClass("card-danger");
-		jQuery("#overall-status-toggle-button").removeClass("btn-warning");
-		jQuery("#overall-status-toggle-button").prop("disabled", false);
-		if (this.oStatus.sError) {
-			jQuery("#overall-status-text").text("Error: " + this.oStatus.sError);
-			jQuery("#overall-status-toggle-button").text("???");
+		var that = this;
+		jQuery("#stateTable tr").each(function() {
+			var vStatus;
+			vStatus = that.oStatus[this.id];
+			jQuery(this).find(".hercules-state-text").text(vStatus);
 
-			jQuery("#overall-status-toggle-button").removeClass("btn-success");
-			jQuery("#overall-status-toggle-button").removeClass("btn-danger");
-			jQuery("#overall-status-toggle-button").addClass("btn-warning");
-
-			jQuery("#overall-status-card").removeClass("card-warning");
-			jQuery("#overall-status-card").removeClass("card-success");
-			jQuery("#overall-status-card").addClass("card-danger");
-		} else if (this.oStatus.bHandleSensorInput) {
-			jQuery("#overall-status-text").text("All systems up and running");
-			jQuery("#overall-status-toggle-button").text("Stop");
-
-			jQuery("#overall-status-toggle-button").removeClass("btn-success");
-			jQuery("#overall-status-toggle-button").addClass("btn-danger");
-
-			jQuery("#overall-status-card").removeClass("card-warning");
-			jQuery("#overall-status-card").addClass("card-success");
-		} else {
-			jQuery("#overall-status-text").text("Systems stopped");
-			jQuery("#overall-status-toggle-button").text("Start");
-
-			jQuery("#overall-status-toggle-button").removeClass("btn-danger");
-			jQuery("#overall-status-toggle-button").addClass("btn-success");
-
-			jQuery("#overall-status-card").removeClass("card-success");
-			jQuery("#overall-status-card").addClass("card-warning");
-		}
+			if (this.id.charAt(0) === "b") {
+				// Special boolean handling
+				if (vStatus === true) {
+					jQuery(this).removeClass("table-danger");
+					jQuery(this).addClass("table-success");
+				} else {
+					jQuery(this).removeClass("table-success");
+					jQuery(this).addClass("table-danger");
+				}
+			}
+		});
 	}
 };
 

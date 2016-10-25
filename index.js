@@ -44,7 +44,7 @@ function handleSensorMessage(oMessage) {
 	var sSite, sRoom, sSensor,
 		oPayload, oSite, oRoom, oSensor;
 
-	if (!oSystemState.getHandleSensorInput()) {
+	if (!oSystemState.getProcessSensorInput()) {
 		return;
 	}
 
