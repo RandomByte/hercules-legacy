@@ -26,23 +26,23 @@
 	<div class="container">
 		<div class="card-deck-wrapper">
 			<div class="card-deck">
-				<div class="card">
-					<h3 class="card-header">System Status</h3>
+				<div id="overall-status-card" class="card card-inverse">
 					<div class="card-block">
-						<h4 id="overall-status-text" class="card-title">...</h4>
-						<a href="#" class="btn btn-primary">Toggle</a>
+						<h4 class="card-title">System Status</h4>
+						<p id="overall-status-text" class="card-text">Loading...</p>
+						<button id="overall-status-toggle-button" class="btn btn-block" type="submit" disabled="">Loading...</button>
 					</div>
 				</div>
-				<div class="card">
-					<h3 class="card-header">stf</h3>
+				<div class="card card-inverse card-primary">
 					<div class="card-block">
-						<h4 id="overall-status-text" class="card-title">...</h4>
+						<h4 class="card-title">Handled Lights</h4>
+						<p class="card-text" id="overall-status-text">...</p>
 					</div>
 				</div>
-				<div class="card">
-					<h3 class="card-header">pony</h3>
+				<div class="card card-inverse card-primary">
 					<div class="card-block">
-						<h4 id="overall-status-text" class="card-title">...</h4>
+						<h4 class="card-title">Ponies on site</h4>
+						<p class="card-text" id="overall-status-text">...</p>
 					</div>
 				</div>
 			</div>

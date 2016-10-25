@@ -4,6 +4,7 @@
   "description": "MQTT+Node.js based hub for home automation",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "huejay": "^1.2.1",

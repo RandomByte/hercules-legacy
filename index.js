@@ -4,15 +4,22 @@ var debug = require("debug")("hercules:main"),
 	Site = require("./lib/site/site.js"),
 	HueWrapper = require("./lib/hue/hueWrapper.js"),
 	MqttClient = require("./lib/mqtt/mqtt.js"),
+	SystemState = require("./lib/system/systemState.js"),
 	RestServer = require("./lib/api/restServer.js"),
 
-	oHueWrapper, oRestServer,
+	oHueWrapper, oRestServer, oSystemState,
 	mSites = {};
 
 if (!oConfig.brokerUrl || !oConfig.topics || !oConfig.mqttTopicRoomToHueGroupMapping || !oConfig.iHttpPort) {
 	console.log("There's something missing in your config.json, please refer to config.example.json for an example");
 	process.exit(1);
 }
+
+oSystemState = new SystemState();
+
+oRestServer = new RestServer({
+	oSystemState: oSystemState
+});
 
 oHueWrapper = new HueWrapper({
 	sHueConfigPath: path.join(__dirname, ".hueConfig.json")
@@ -26,6 +33,7 @@ oHueWrapper.getReady()
 		oMqtt.attachSensorMessage(function(oMessage) {
 			handleSensorMessage(oMessage);
 		});
+		oRestServer.init(oConfig.iHttpPort);
 	})
 	.catch(function(err) {
 		console.log("Hue connection initialization failed:");
@@ -35,6 +43,10 @@ oHueWrapper.getReady()
 function handleSensorMessage(oMessage) {
 	var sSite, sRoom, sSensor,
 		oPayload, oSite, oRoom, oSensor;
+
+	if (!oSystemState.getHandleSensorInput()) {
+		return;
+	}
 
 	sSite = oMessage.sSite;
 	sRoom = oMessage.sRoom;
@@ -60,7 +72,3 @@ function handleSensorMessage(oMessage) {
 
 	oSensor.setValue(oPayload);
 }
-
-oRestServer = new RestServer({
-	iHttpPort: oConfig.iHttpPort
-});
