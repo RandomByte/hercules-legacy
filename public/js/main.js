@@ -63,7 +63,7 @@ hercules.App = class {
 		this.oStatus = oNewSatus;
 		jQuery("#stateTable tr").each(function() {
 			var vStatus;
-			vStatus = that.oStatus[this.id] || that.oStatus.sError;
+			vStatus = that.oStatus[this.id];
 			jQuery(this).find(".hercules-state-text").text(vStatus);
 
 			if (this.id.charAt(0) === "b") {
