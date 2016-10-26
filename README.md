@@ -33,15 +33,20 @@ Find the corresponding project here: [github.com/RandomByte/esp8266-mqtt-light-s
 That's a simple ESP8266 (NodeMCU) with an LDR soldered to it.
 
 ## Installation
+### Mosquitto
+1. Install the MQTT broker Mosquitto: https://mosquitto.org/download/
+    For Debian (e.g. Raspbian): https://mosquitto.org/2013/01/mosquitto-debian-repository/
+
+## Hercules
 1. Clone repo
-2. Do `npm install --only=production`
+2. Do `npm install --production`
 3. Copy over `config.example.json` to `config.json` and change it as needed
 4. Run with `node index.js`
 
 Steps for deamonized autorun will follow when it gets more stable.
 
 ## Debugging
-Run with `DEBUG=hercules:* node index.js` to get verbose logging. Make sure to run `npm install` (without the production flag) to install the debug module.
+Run with `DEBUG=hercules:* node index.js` to get verbose logging.
 
 ## Contributing
 - Use [ESLint](http://eslint.org/) and make sure to install all development dependencies using `npm install` (without the production flag)
