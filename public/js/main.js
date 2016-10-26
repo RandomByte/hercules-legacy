@@ -7,6 +7,7 @@ hercules.App = class {
 		this.oUtil = new hercules.Util();
 
 		this._registerButtonHandlers();
+		this._registerWebSocket();
 	}
 
 	_registerButtonHandlers() {
@@ -37,32 +38,32 @@ hercules.App = class {
 				if (callback) {
 					callback();
 				}
-				this.oStatus = oData;
-				this._updateStatus();
+				this._updateStatus(oData);
 			}.bind(this), function(sError) {
 				console.error("Toggle Status Error:", sError);
 				if (callback) {
 					callback();
 				}
-				this.oStatus.sError = sError;
-				this._updateStatus();
+				this._updateStatus({
+					sError: sError
+				});
 			}.bind(this));
 	}
 
 	updateStatus() {
 		this.oUtil.get("status", function(oData) {
-			this.oStatus = oData;
-			this._updateStatus();
+			this._updateStatus(oData);
 		}.bind(this), function(sError) {
 			console.error("Update Status Error:", sError);
 		});
 	}
 
-	_updateStatus() {
+	_updateStatus(oNewSatus) {
 		var that = this;
+		this.oStatus = oNewSatus;
 		jQuery("#stateTable tr").each(function() {
 			var vStatus;
-			vStatus = that.oStatus[this.id];
+			vStatus = that.oStatus[this.id] || that.oStatus.sError;
 			jQuery(this).find(".hercules-state-text").text(vStatus);
 
 			if (this.id.charAt(0) === "b") {
@@ -76,6 +77,14 @@ hercules.App = class {
 				}
 			}
 		});
+	}
+
+	_registerWebSocket() {
+		var socket = io();
+
+		socket.on("statusChange", function(oData) {
+			this._updateStatus(oData);
+		}.bind(this));
 	}
 };
 

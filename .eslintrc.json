@@ -29,6 +29,7 @@
     },
     "globals": {
         "jQuery": true,
-        "hercules": true
+        "hercules": true,
+        "io": true
     }
 }
