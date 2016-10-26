@@ -82,6 +82,18 @@ hercules.App = class {
 	_registerWebSocket() {
 		var socket = io();
 
+		socket.on("connect", function() {
+			jQuery("#hercules-ws-error").hide();
+		});
+
+		socket.on("disconnect", function() {
+			jQuery("#hercules-ws-error").show();
+		});
+
+		socket.on("error", function() {
+			jQuery("#hercules-ws-error").hide();
+		});
+
 		socket.on("statusChange", function(oData) {
 			this._updateStatus(oData);
 		}.bind(this));
@@ -90,6 +102,8 @@ hercules.App = class {
 
 hercules.Util = class {
 	get(sPath, success, error) {
+		jQuery("#hercules-unknown-error").hide();
+
 		jQuery.ajax({
 			method: "GET",
 			url: "/api/" + sPath,
@@ -99,6 +113,11 @@ hercules.Util = class {
 				success(oData);
 			},
 			error: function(oReq, sStatus, sError) {
+				if (!sError) {
+					// e.g. a connection error
+					jQuery("#hercules-unknown-error").show();
+				}
+
 				if (error) {
 					error(sError);
 				} else {
@@ -109,6 +128,8 @@ hercules.Util = class {
 	}
 
 	post(sPath, oData, success, error) {
+		jQuery("#hercules-unknown-error").hide();
+
 		jQuery.ajax({
 			method: "POST",
 			url: "/api/" + sPath,
@@ -119,6 +140,11 @@ hercules.Util = class {
 				success(oData);
 			},
 			error: function(oReq, sStatus, sError) {
+				if (!sError) {
+					// e.g. a connection error
+					jQuery("#hercules-unknown-error").show();
+				}
+
 				if (error) {
 					error(sError);
 				} else {

@@ -26,6 +26,7 @@
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/lib/ionicons/css/ionicons.min.css">
 	<link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
@@ -35,11 +36,18 @@
 
 	<div class="jumbotron">
 		<div class="container">
-			<h1 class="display-3">hercules</h1>
+			<h1 class="display-3 hercules-color-a">hercules</h1>
 		</div>
 	</div>
 
 	<div class="container">
+		<div id="hercules-unknown-error" style="display: none" class="alert alert-danger" role="alert">
+			<i class="icon ion-alert-circled"></i> Unknown Error
+		</div>
+		<div id="hercules-ws-error" style="display: none" class="alert alert-warning" role="alert">
+			<i class="icon ion-alert-circled"></i> WebSocket connection error
+		</div>
+
 		<h1>States</h1>
 		<table class="table table-hover">
 			<thead>
@@ -60,7 +68,7 @@
 
 		<hr>
 		<footer>
-			<p><a href="https://github.com/RandomByte/hercules">hercules on GitHub</a></p>
+			<p><a href="https://github.com/RandomByte/hercules">hercules on GitHub <i class="icon ion-social-github"></i></a></p>
 		</footer>
 	</div>
 
